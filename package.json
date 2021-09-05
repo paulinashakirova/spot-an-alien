@@ -9,6 +9,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "dart-sass": "^1.25.0",
+    "gsap": "^3.7.1",
     "node-sass": "^6.0.1",
     "vue": "^3.0.0",
     "vuex": "^4.0.0-0",

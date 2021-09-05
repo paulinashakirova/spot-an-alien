@@ -1,15 +1,18 @@
 <template>
 	<div id="app" class="contain">
-    <!-- -->
-    <GamestateStart v-if='uiState === "start"'>
-      <h2>Which hooman do you want to be?</h2>
-      <p v-for='option in characterChoices' :key='option' class='characterChoices'>
-        <input type="radio" :id='option' :name='option' :value='option' v-model='characterinput'/>
-        <label :for="option">{{option}}</label>
-      </p>
-      <button @click='pickCharacter'>Pick your character!</button>
-    </GamestateStart>
-   <!--  -->
+		<!-- -->
+		<GamestateStart v-if="uiState === 'start'">
+			<h2>Which hooman do you want to be?</h2>
+			<p v-for="option in characterChoices" :key="option" class="characterChoices">
+				<input type="radio" :id="option" :name="option" :value="option" v-model="characterinput" />
+				<label :for="option">{{ option }}</label>
+			</p>
+			<button @click="pickCharacter">Pick your character!</button>
+		</GamestateStart>
+		<GamestateFinish v-else-if="uiState === 'win' || uiState === 'lose'">
+		
+		</GamestateFinish>
+		<!--  -->
 		<section v-else>
 			<svg viewBox="0 -180 1628 1180" class="main">
 				<defs>
@@ -20,13 +23,13 @@
 						<rect class="top-clip-path" x="1131.5" y="69.5" width="406" height="473" />
 					</clipPath>
 				</defs>
-        <Friend />
-        <Score />
+				<Friend />
+				<Score />
 
-        <component :is='character'></component>
+				<component :is="character"></component>
 
 				<text x="1000" y="930" style="font: normal 45px 'Recursive; text-transform: uppercase;" class="text">
-					{{character}}
+					{{ character }}
 				</text>
 
 				<path fill="#f0959f" d="M0 842h657v192H0z" />
@@ -57,14 +60,14 @@
 					/>
 				</g>
 			</svg>
-      <div class='friendtalk'>
-        <h3>{{questions[questionIndex].question}}</h3>
-      </div>
-      <div class='zombietalk'>
-        <p v-for='character in characterChoices' :key='character'>
-          <button @click='pickQuestion(character)'>{{questions[questionIndex][character]}}</button>
-        </p>
-      </div>
+			<div class="friendtalk">
+				<h3>{{ questions[questionIndex].question }}</h3>
+			</div>
+			<div class="zombietalk">
+				<p v-for="character in shuffle(characterChoices)" :key="character">
+					<button @click="pickQuestion(character)">{{ questions[questionIndex][character] }}</button>
+				</p>
+			</div>
 		</section>
 	</div>
 </template>
@@ -78,34 +81,43 @@ import Score from '@/components/Score.vue';
 import Friend from '@/components/Friend.vue';
 import Mechanic from '@/components/Mechanic.vue';
 import Zombie from '@/components/Zombie.vue';
+import GamestateFinish from '@/components/GamestateFinish.vue';
 
 export default {
 	components: {
 		GamestateStart,
-    Artist,
-    Baker,
-    Score,
-    Friend,
-    Mechanic,
-    Zombie
+		Artist,
+		Baker,
+		Score,
+		Friend,
+		Mechanic,
+		Zombie,
+		GamestateFinish
 	},
-  data() {
-    return {
-      characterinput: '', // the selected character
-    }},
+	data() {
+		return {
+			characterinput: '' // the selected character
+		};
+	},
 	computed: {
 		...mapState(['uiState', 'questions', 'characterChoices', 'character', 'score', 'questionIndex'])
 	},
-  methods: {
-    pickCharacter() {
-      this.$store.commit('pickCharacter', this.characterinput);
-      this.$store.commit('updateUiState', 'characterChosen');
-    },
-    pickQuestion(character) {
-      console.log(character);
-      // this.$store.commit('pickQuestion', character);
-    }
-  }
+	methods: {
+		pickCharacter() {
+			this.$store.commit('pickCharacter', this.characterinput);
+			this.$store.commit('updateUiState', 'characterChosen');
+		},
+		pickQuestion(character) {
+			this.$store.commit('pickQuestion', character);
+		},
+		shuffle(array) {
+			for (let i = array.length - 1; i > 0; i--) {
+				let j = Math.floor(Math.random() * (i + 1));
+				[array[i], array[j]] = [array[j], array[i]];
+			}
+			return array;
+		}
+	}
 };
 </script>
 
