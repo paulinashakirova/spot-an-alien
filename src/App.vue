@@ -3,17 +3,14 @@
 		<!-- -->
 		<GamestateStart v-if="uiState === 'start'">
 			<h2>Which hooman do you want to be?</h2>
-			<p v-for="option in characterChoices" :key="option" class="characterChoices">
+			<p v-for="option in characterChoices" :key="option" class="character-choices">
 				<input type="radio" :id="option" :name="option" :value="option" v-model="characterinput" />
 				<label :for="option">{{ option }}</label>
+				<br />
 			</p>
 			<button @click="pickCharacter">Pick your character!</button>
 		</GamestateStart>
-		<GamestateFinish v-else-if="uiState === 'win' || uiState === 'lose'">
-		
-		</GamestateFinish>
-		<!--  -->
-		<section v-else>
+		<section v-else-if="uiState === 'characterChosen'">
 			<svg viewBox="0 -180 1628 1180" class="main">
 				<defs>
 					<clipPath id="bottom-clip">
@@ -26,7 +23,8 @@
 				<Friend />
 				<Score />
 
-				<component :is="character"></component>
+				<component :is="character" class="character-clip"></component>
+				<Zombie class="zombie-clip" />
 
 				<text x="1000" y="930" style="font: normal 45px 'Recursive; text-transform: uppercase;" class="text">
 					{{ character }}
@@ -69,11 +67,13 @@
 				</p>
 			</div>
 		</section>
+		<GamestateFinish v-else />
 	</div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import gsap from 'gsap';
 import GamestateStart from '@/components/GamestateStart.vue';
 import Artist from '@/components/Artist.vue';
 import Baker from '@/components/Baker.vue';
@@ -106,6 +106,7 @@ export default {
 		pickCharacter() {
 			this.$store.commit('pickCharacter', this.characterinput);
 			this.$store.commit('updateUiState', 'characterChosen');
+			this.characterinput = '';
 		},
 		pickQuestion(character) {
 			this.$store.commit('pickQuestion', character);
@@ -116,6 +117,13 @@ export default {
 				[array[i], array[j]] = [array[j], array[i]];
 			}
 			return array;
+		},
+		watch: {
+			score(newValue, oldValue) {
+				gsap.to('.bottom-clip-path, .top-clip-path', {
+					y: -newValue * 6,
+				});
+			}
 		}
 	}
 };

@@ -51,17 +51,25 @@ export default createStore({
 		pickCharacter(state, character) {
 			state.character = character;
 		},
+		updateScore(state, amount) {
+			state.score = amount;
+		},
 		updateUiState(state, uiState) {
 			state.uiState = uiState;
-			
-    },
-    pickQuestion(state, character) {
-			character === state.character ? state.score+= 13 : state.score-= 13;
-			if(state.questionIndex < state.questions.length - 1) {
+		},
+		pickQuestion(state, character) {
+			character === state.character ? (state.score += 13) : (state.score -= 13);
+			if (state.questionIndex < state.questions.length - 1) {
 				state.questionIndex++;
 			} else {
-				Math.sign(state.score) > 0 ? state.uiState = 'win' : state.uiState = 'lose';
+				Math.sign(state.score) > 0 ? (state.uiState = 'win') : (state.uiState = 'lose');
 			}
-    }
+		},
+		reset(state) {
+			state.uiState = 'start';
+			state.score = 0;
+			state.questionIndex = 0;
+			state.character = ''
+		}
 	}
 });
